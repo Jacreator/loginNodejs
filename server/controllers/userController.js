@@ -13,6 +13,7 @@ tokenGen = user => {
 };
 
 module.exports = {
+    // singin
     signIn: async (req, resp, next) => {
         const userDetail = req.user;
         // Generate token
@@ -20,18 +21,26 @@ module.exports = {
         // send the info to frontend
         resp.json({ token });
     },
+
+    // signUp
     signUp: async (req, resp, next) => {
         // user Info
         const { email, password } = req.value.body;
 
         // check if user already exist in our database
-        var foundUser = await UserModel.findOne({ email });
+        var foundUser = await UserModel.findOne({ "local.email": email });
         if (foundUser) {
             return resp.status(403).json({ error: 'Email is already in use' });
         }
 
         // creating a new user
-        const newUser = new UserModel({ email, password });
+        const newUser = new UserModel({
+            method: "local",
+            local: {
+                email: email,
+                password: password
+            }
+        });
         await newUser.save();
 
         // response with token
@@ -39,6 +48,27 @@ module.exports = {
         resp.status(200).json({ token }); // send info to frontend
 
     },
+
+    // google 
+    googleOAuth: async (req, res, next) => {
+        // Generate token
+        const token = tokenGen(req.user);
+        res.cookie('access_token', token, {
+            httpOnly: true
+        });
+        res.status(200).json({ success: true });
+    },
+
+    // facebook
+    facebookOAuth: async (req, res, next) => {
+        // Generate token
+        const token = tokenGen(req.user);
+        res.cookie('access_token', token, {
+            httpOnly: true
+        });
+        res.status(200).json({ success: true });
+    },
+    // dashboard
     secret: async (req, resp, next) => {
         console.log('i managed to get here');
         console.log('UserControllers.secret called');

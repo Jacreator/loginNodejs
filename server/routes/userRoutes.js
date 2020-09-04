@@ -12,6 +12,7 @@ const passportAuth = passport.authenticate('local', { session: false });
 const passportAuthJWT = passport.authenticate('jwt', { session: false });
 const validatBody = validateBody(schemas.authSchema);
 const googleIn = passport.authenticate('googleToken', { session: false });
+const facebookIn = passport.authenticate('facebookToken', { session: false });
 
 
 // signUP route
@@ -23,8 +24,12 @@ routers.route('/signin')
     .post(validatBody, passportAuth, UserController.signIn);
 
 // google route
-routers.route('/signin/google')
-    .post(googleIn);
+routers.route('/oauth/google')
+    .post(googleIn, UserController.googleOAuth);
+
+// facebook route
+routers.route('/oauth/facebook')
+    .post(facebookIn, UserController.facebookOAuth);
 
 // secret route for auth user
 routers.route('/secret')

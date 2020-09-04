@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start-dev": "nodemon app.js",
+    "start": "nodemon index.js",
+    "start-dev": "nodemon index.js",
     "test": "cross-env NODE_ENV=test mocha --timeout 5000 __tests__/server/**/*.test.js",
     "report": "cross-env NODE_ENV=test nyc --reporter=lcov mocha --timeout 5000 __tests__/server/**/*.test.js",
     "text-report": "cross-env NODE_ENV=test nyc --reporter=text-summary mocha --timeout 5000 __tests__/server/**/*.test.js",
@@ -23,6 +24,7 @@
     "mongoose": "^5.10.2",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
+    "passport-facebook-token": "^4.0.0",
     "passport-google-plus-token": "^2.1.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0"

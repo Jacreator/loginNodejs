@@ -41,15 +41,18 @@ const userSchema = new Schema({
 
 //  before save called
 userSchema.pre('save', async function (next) {
+    if (this.method !== 'local') {
+        next();
+    }
     try {
         // generate salt with 12 rounds
         const salt = await bcrypt.genSalt(12);
 
         // password hash 
-        const passwordHash = await bcrypt.hash(this.password, salt);
+        const passwordHash = await bcrypt.hash(this.local.password, salt);
 
         // assign generated hashed password to password
-        this.password = passwordHash;
+        this.local.password = passwordHash;
         next();
     } catch (error) {
         next(error);
@@ -59,7 +62,7 @@ userSchema.pre('save', async function (next) {
 // password comparison takes in new password and return a boolean
 userSchema.methods.isValidPassword = async function (newPassword) {
     try {
-        return await bcrypt.compare(newPassword, this.password);
+        return await bcrypt.compare(newPassword, this.local.password);
     } catch (error) {
         throw new Error(error);
     }
