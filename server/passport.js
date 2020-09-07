@@ -111,7 +111,7 @@ passport.use('facebookToken', new FacebookTokenStrategy({
             req.user.facebook = {
                 id: profile.id,
                 email: profile.emails[0].value
-            }
+            };
             await req.user.save();
             return done(null, req.user);
         } else {
@@ -122,15 +122,15 @@ passport.use('facebookToken', new FacebookTokenStrategy({
             }
 
             // Check if we have someone with the same email
-            existingUser = await User.findOne({ "local.email": profile.emails[0].value })
+            existingUser = await User.findOne({ "local.email": profile.emails[0].value });
             if (existingUser) {
                 // We want to merge facebook's data with local auth
-                existingUser.methods.push('facebook')
+                existingUser.methods.push('facebook');
                 existingUser.facebook = {
                     id: profile.id,
                     email: profile.emails[0].value
-                }
-                await existingUser.save()
+                };
+                await existingUser.save();
                 return done(null, existingUser);
             }
 
