@@ -4,35 +4,44 @@ const passport = require('passport');
 
 // local file url
 const passportConfig = require('../passport');
-const UserController = require('../controllers/userController');
+const UsersController = require('../controllers/userController');
 const { validateBody, schemas } = require('../helpers/routeHelpers');
 
-// validation function
-const passportAuth = passport.authenticate('local', { session: false });
-const passportAuthJWT = passport.authenticate('jwt', { session: false });
-const validatBody = validateBody(schemas.authSchema);
-const googleIn = passport.authenticate('googleToken', { session: false });
-const facebookIn = passport.authenticate('facebookToken', { session: false });
 
+const passportSignIn = passport.authenticate();
+const passportJWT = passport.authenticate('jwt', { session: false });
 
-// signUP route
 routers.route('/signup')
-    .post(validatBody, UserController.signUp);
+    .post(validateBody(schemas.authSchema), UsersController.signUp);
 
-// signIn route
 routers.route('/signin')
-    .post(validatBody, passportAuth, UserController.signIn);
+    .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
 
-// google route
+routers.route('/signout')
+    .get(passportJWT, UsersController.signOut);
+
 routers.route('/oauth/google')
-    .post(googleIn, UserController.googleOAuth);
+    .post(passport.authenticate('google', { session: false }), UsersController.googleOAuth);
 
-// facebook route
 routers.route('/oauth/facebook')
-    .post(facebookIn, UserController.facebookOAuth);
+    .post(passport.authenticate('facebook', { session: false }), UsersController.facebookOAuth);
 
-// secret route for auth user
-routers.route('/secret')
-    .get(passportAuthJWT, UserController.secret);
+routers.route('/oauth/link/google')
+    .post(passportJWT, passport.authorize('google', { session: false }), UsersController.linkGoogle);
+
+routers.route('/oauth/unlink/google')
+    .post(passportJWT, UsersController.unlinkGoogle);
+
+routers.route('/oauth/link/facebook')
+    .post(passportJWT, passport.authorize('facebook', { session: false }), UsersController.linkFacebook);
+
+routers.route('/oauth/unlink/facebook')
+    .post(passportJWT, UsersController.unlinkFacebook);
+
+routers.route('/dashboard')
+    .get(passportJWT, UsersController.dashboard);
+
+routers.route('/status')
+    .get(passportJWT, UsersController.checkAuth);
 
 module.exports = routers;

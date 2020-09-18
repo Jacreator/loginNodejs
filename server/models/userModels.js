@@ -1,5 +1,6 @@
 const mongoos = require('mongoose');
 const bcrypt = require('bcrypt');
+const { string } = require('joi');
 const Schema = mongoos.Schema;
 
 // Create a Schema
@@ -25,6 +26,12 @@ const userSchema = new Schema({
         email: {
             type: String,
             lowercase: true
+        },
+        accTokn: {
+            type: String,
+        },
+        refreTokn: {
+            type: String
         }
     },
     facebook: {
@@ -34,6 +41,12 @@ const userSchema = new Schema({
         email: {
             type: String,
             lowercase: true
+        },
+        accTokn: {
+            type: String,
+        },
+        refreTokn: {
+            type: String
         }
     }
 

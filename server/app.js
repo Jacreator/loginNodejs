@@ -2,9 +2,16 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
+// local url
 const userRoutes = require('./routes/userRoutes');
 
+
 const app = express();
+
+// read this doc for more security
+app.use(cors());
 
 mongoose.Promise = global.Promise;
 
@@ -13,7 +20,7 @@ if (process.env.NODE_ENV == 'test') {
     const dbUrltest = "mongodb+srv://Buzzroom:dreamworks1978@dream2works.krbu5.mongodb.net/test?retryWrites=true&w=majority";
 
     //  Connecting to a remote MongoDB locally
-    const localDBtest = "mongodb://localhost/test";
+    const localDBtest = "mongodb://localhost/buzzroomT";
     mongoose.connect(localDBtest, { useNewUrlParser: true, useUnifiedTopology: true });
 } else {
     //  Connecting to a remote MongoDB remotely
@@ -25,7 +32,7 @@ if (process.env.NODE_ENV == 'test') {
 }
 
 // middleware
-if (!process.env.NODE_ENV == 'test') {
+if (!process.env.NODE_ENV === 'test') {
     app.use(morgan('dev'));
 }
 app.use(bodyParser.json());
@@ -35,4 +42,7 @@ app.use(bodyParser.json());
 app.use('/user', userRoutes);
 
 // export app
-module.exports = app
+module.exports = app;
+
+
+
